@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+        <link rel="stylesheet" type="text/css" href="../style.css">
+    </head>
+    <body class="body-white">
+        <h1 class="title content">Dashboard</h1>
+        <div class="banner">
+            <label class="label" for="manageUsers">Manage Users &#40requires admin status&#41</label>
+            <a href="users.html">
+                <button id="manageUsers" class="button button-red">Open</button>
+            </a>
+        </div>
+        <script type="module" src="../auth/loginStatus.js"></script>
+        <script type="module" src="dashboard.js"></script>
+    </body>
+</html>

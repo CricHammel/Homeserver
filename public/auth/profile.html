@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body class="body-white">
+    <h1 id="title" class="title" style="display: none;">User Profile of "<a id="username"></a>"</h1>
+    <div id="profile-container" class="banner">
+        <div id="form-container" style="display: none;">
+            <form id="username-form">
+                <label for="new-username" class="label">New Username:</label>
+                <input type="text" id="new-username" class="input" placeholder="Enter new username" required>
+                <button type="submit" id="submit-username" class="button button-green">Change Username</button>
+            </form>
+            <hr>
+            <form id="password-form">
+                <label for="old-password" class="label">Old Password:</label>
+                <input type="password" id="old-password" class="input" placeholder="Enter old password" required>
+                <label for="new-password" class="label">New Password:</label>
+                <input type="password" id="new-password" class="input" placeholder="Enter new password" required>
+                <button type="submit" id="submit-password" class="button button-green">Change Password</button>
+            </form>
+            <div class="link-wrapper">
+                <a href="../index.html">Go back to main page</a>
+            </div>
+        </div>
+
+        <h1 id="error" style="display: none;">You must be logged in to do that!</h1>
+    </div>
+
+    <script type="module" src="loginStatus.js"></script>
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

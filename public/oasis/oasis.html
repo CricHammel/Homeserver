@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Oasis</title>
+        <link
+            href="https://fonts.googleapis.com/css?family=Raleway"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            body {
+                display: block;
+            }
+
+            .chat-container {
+                display: flex;
+                height: 100vh;
+            }
+
+            .recent-chats-container {
+                width: 25%;
+                background-color: #e0e0e0;
+                padding: 20px;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .searchbar {
+                border-radius: 5px;
+                padding: 20px;
+                margin-bottom: 20px;
+                background-color: #ccc;
+                display: flex;
+                justify-content: space-evenly;
+            }
+
+            #search {
+                width: 70%;
+                height: 30px;
+                border-radius: 3px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+            }
+
+            #new-chat {
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                background-color: #3498db;
+                cursor: pointer;
+            }
+
+            .recent-chats {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                overflow-y: auto;
+                max-height: 100%;
+            }
+
+            .recent-chat {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                margin-bottom: 20px;
+                text-align: left;
+            }
+
+            .recent-chat-selected {
+                background-color: #ccc;
+            }
+
+            .recent-chat-first {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .recent-chat-second {
+                font-size: small;
+            }
+
+            .chat-window {
+                flex: 1;
+                padding: 20px;
+                position: relative;
+            }
+
+            .current-chat-container {
+                height: 100%;
+            }
+
+            .chat-header {
+                position: fixed;
+            }
+
+            .messages {
+                height: calc(100% - 40px);
+                align-content: end;
+                overflow-y: scroll;
+                display: flex;
+                flex-direction: column-reverse;
+            }
+
+            .message {
+                margin-bottom: 15px;
+                padding: 10px;
+                padding-bottom: 5px;
+                border-radius: 5px;
+                width: fit-content;
+                max-width: 70%;
+            }
+
+            .message-left {
+                background-color: #3498db;
+                color: white;
+                align-self: flex-start;
+                margin-right: auto;
+                text-align: left;
+            }
+
+            .message-right {
+                background-color: #2ecc71;
+                color: white;
+                right: 10px;
+                align-self: flex-end;
+                margin-left: auto;
+                text-align: right;
+            }
+
+            .message-time {
+                font-size: smaller;
+            }
+
+            #no-chat {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: xx-large;
+                color: #888;
+            }
+
+            .input-container {
+                display: flex;
+                margin-top: 20px;
+                position: absolute;
+                bottom: 2vh;
+                width: calc(100% - 20px);
+            }
+
+            .message-input {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+                margin-right: 10px;
+                width: 80%;
+            }
+
+            .send-button {
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 15px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body class="body-white">
+        <div class="chat-container">
+            <div class="recent-chats-container">
+                <div class="searchbar">
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="Filter or start new chat"
+                    />
+                    <button id="new-chat">New chat</button>
+                </div>
+                <ul class="recent-chats"></ul>
+                <p id="no-chats" style="display: none">No recent chats</p>
+            </div>
+
+            <div class="chat-window">
+                <div class="current-chat-container" style="display: none">
+                    <div class="chat-header">
+                        <h2 id="chat-partner"></h2>
+                    </div>
+                    <div class="messages"></div>
+                    <div class="input-container">
+                        <input
+                            type="text"
+                            class="message-input"
+                            placeholder="Type your message..."
+                        />
+                        <button class="send-button">Send</button>
+                    </div>
+                </div>
+                <h id="no-chat">No chat selected</h>
+            </div>
+        </div>
+        <script type="module" src="oasis.js"></script>
+    </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <title>Cellular Automata</title>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <style>
+        #canvas {
+            display: block;
+            width: 100%;
+            top: 10%;
+        }
+
+        #title {
+            top: 20px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #menu {
+            transform: translate(-50%, 10vh);
+            bottom: 20px;
+            display: flex;
+            padding: 15px;
+            position: fixed;
+        }
+
+        #menu * {
+            width: 5vw;
+            height: 3vh;
+        }
+
+        #options {
+            top: 25%;
+            min-width: 40%;
+            padding: 10px;
+            display: grid;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .options-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .options-group * {
+            margin: 5px;
+        }
+
+        .gen-container {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="body-white">
+    <div id="title" class="banner">
+        <h2>Cellular Automata</h2>
+        <a>by Cric_Hammel</a>
+    </div>
+    <div id="options" class="banner">
+        <div class="options-group">
+            <label for="sizeSlider">Cell size:</label>
+            <input type="range" id="sizeSlider" min="1" max="50" value="10" oninput="this.nextElementSibling.value = this.value + 'px'">
+            <output>10px</output>
+        </div>
+        <div class="options-group">
+            <label for="ruleInput">Rule:</label>
+            <input type="number" id="ruleInput" min="0" max="255" value="129">
+            <a>(between 0 and 255)</a>
+            <a href="https://mathworld.wolfram.com/ElementaryCellularAutomaton.html">&#9432;</a>
+        </div>
+        <div class="options-group">
+            <label for="gensInput">Generations:</label>
+            <input type="number" id="gensInput" min="1" max="1000" value="100">
+        </div>
+        <button id="generate" onclick="generate()">Generate</button>
+    </div>
+    <div id="canvas"></div>
+    <div id="menu" class="banner">
+        <button id="restart" onclick="restart()">Restart</button>
+    </div>
+    <script src="cellularAutomata.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+  <link rel="stylesheet" type="text/css" href="../style.css">
+  <style>
+    canvas {
+      display: block;
+    }
+
+    #title {
+      top: 20px;
+      display: block;
+      text-align: center;
+      padding: 5px;
+    }
+    
+    #menu {
+      bottom: 20px;
+      display: flex;
+      padding: 10px;
+    }
+
+    #menu * {
+      margin-left: 3px;
+      margin-right: 3px;
+      font-size: small;
+    }
+
+    button {
+      margin-right: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <title>Game of Life</title>
+</head>
+
+<body>
+  <div id="title" class="banner">
+    <h2>Conway's Game of Life</h2>
+    <a>by Cric_Hammel</a>
+  </div>
+  <canvas id="gridCanvas"></canvas>
+  <div id="menu" class="banner">
+    <button id="startStopButton">Start</button>
+    <button id="clearButton">Clear</button>
+    <label for="speedSlider">Speed:</label>
+    <input type="range" id="speedSlider" min="1" max="1000" value="500" step="1">
+    <input type="checkbox" id="sprint">
+    <label for="sprint">Sprint</label>
+    <select id="patternSelect">
+
+    </select>
+    <button id="pastePatternButton">Paste Pattern</button>
+    <a>Generations:</a>
+    <a id="gens">0</a>
+  </div>
+
+  <script src="gol.js"></script>
+</body>
+
+</html>

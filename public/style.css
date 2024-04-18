@@ -1,0 +1,140 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Raleway';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.body-white {
+    background-color: #f0f0f0;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+}
+
+.header-content {
+    margin: 10px;
+}
+
+.background {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner {
+    position: absolute;
+    left: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    text-align: center;
+    transition: 0.5s;
+    padding: 25px;
+    transform: translateX(-50%);
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input-box {
+    padding: 30px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 400px;
+}
+
+.button {
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: medium;
+}
+
+.button-green {
+    background-color: #4CAF50;
+}
+
+.button-green:hover {
+    background-color: #45a049;
+}
+
+.button-blue {
+    background-color: #3498db;
+}
+
+.button-blue:hover {
+    background-color: #3184c0;
+}
+
+.button-red {
+    background-color: #ff0000;
+}
+
+.button-red:hover {
+    background-color: #e50000;
+}
+
+.title {
+    position: absolute;
+    top: 13vh;
+    text-align: center;
+    color: #333;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.link-wrapper {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.link-wrapper * {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+hr {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+input[type=number] {
+    min-width: 5vw;
+}

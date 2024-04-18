@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <style>
+        body {
+            background-color: greenyellow;
+        }
+
+        #canvas {
+            position: fixed;
+            left: 0;
+            width: 90%;
+            top: 0;
+            height: 90%;
+            transform: translate(5%, 5%);
+        }
+
+        #title {
+            transform: translateX(-50%);
+            top: 20px;
+            display: block;
+            text-align: center;
+            padding: 5px;
+        }
+
+        #title * {
+            margin: 5px;
+        }
+
+        #title p {
+            font-size: smaller;
+        }
+
+        #input-container {
+            width: 500px;
+            opacity: 85%;
+            z-index: 1;
+            top: 25%;
+        }
+
+        #menu {
+            transform: translate(-50%, 10vh);
+            bottom: 20px;
+            padding: 10px;
+            display: flex;
+            position: fixed;
+        }
+
+        #menu * {
+            margin-left: 5px;
+        }
+
+        #submit {
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        .word {
+            color: darkgreen;
+            position: fixed;
+            cursor: pointer;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="title" class="banner">
+        <h2>Word Counter</h2>
+        <a>by Cric_Hammel</a>
+        <p>The bigger the word, the more often it appears. Click on a word to see its count</p>
+    </div>
+    <div id="canvas"></div>
+    <div id="input-container" class="banner">
+        <textarea id="input" class="input-box" type="text" placeholder="Write or paste your text here" autofocus></textarea>
+        <button id="submit" onclick="submit()">Click to submit</button>
+    </div>
+    <div id="menu" class="banner">
+        <a>Count:</a>
+        <a id="count">0</a>
+        <button id="restart" onclick="restart()">Click to enter new text</button>
+    </div>
+
+    <script src="wordCounter.js"></script>
+</body>
+
+</html>

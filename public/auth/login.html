@@ -1,0 +1,29 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body class="body-white">
+    <h1 class="title">Login</h1>
+    <form id="loginForm" class="banner">
+        <label for="username" class="label">Username:</label>
+        <input type="text" id="username" name="username" class="input" required autofocus>
+        <br>
+        <label for="password" class="label">Password:</label>
+        <input type="password" id="password" name="password" class="input" required>
+        <br>
+        <button type="submit" class="button button-green">Login</button>
+        <div class="link-wrapper">
+            <h>Do not have an account yet?</h>
+            <a href="register.html">Register</a>
+        </div>
+    </form>
+
+    <script type="module" src="login.js"></script>
+</body>
+</html>
