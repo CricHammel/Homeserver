@@ -26,6 +26,7 @@ const pool = mysql.createPool({
     `);
   } catch (error) {
     console.log("Something went wrong: " + error);
+    console.log(error);
   }
 })();
 

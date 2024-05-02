@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql2/promise");
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const crypto = require("crypto");
@@ -41,8 +42,24 @@ app.use(
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
 app.use(cors({credentials: true, origin: "http://localhost:3000"}));
-app.use("/users", authRoutes);
-app.use("/chats", chatRoutes);
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.MYSQL_ROOT_PASSWORD,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+(async () => {
+    const connection = await pool.getConnection();
+    await connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
+    await connection.changeUser({ database: process.env.DB_NAME });
+    connection.release();
+    app.use("/users", authRoutes);
+    app.use("/chats", chatRoutes);
+})();
 
 app.get("/fetchGeo", async (req, res) => {
     const geoUrl =

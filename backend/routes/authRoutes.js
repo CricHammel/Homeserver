@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.MYSQL_ROOT_PASSWORD,
-  // database: process.env.DB_NAME,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -16,10 +16,7 @@ const pool = mysql.createPool({
 
 (async () => {
   try {
-    const connection = await pool.getConnection();
-    await connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
-    await connection.changeUser({ database: process.env.DB_NAME });
-    await connection.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL UNIQUE,
@@ -27,7 +24,6 @@ const pool = mysql.createPool({
         status VARCHAR(255)
       )
       `);
-    connection.release();
   } catch (error) {
     console.log("Something went wrong: " + error.message);
     console.log(error);
