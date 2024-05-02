@@ -12,14 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
+    "express-mysql-session": "^3.0.2",
     "express-session": "^1.17.3",
-    "mongoose": "^8.1.1",
-    "uuid": "^9.0.1"
+    "mysql2": "^3.9.7"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

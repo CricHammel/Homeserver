@@ -1,5 +1,7 @@
 .DS_Store
 
+*.rest
+
 # Logs
 logs
 *.log

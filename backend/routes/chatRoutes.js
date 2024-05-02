@@ -1,22 +1,33 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const mysql = require("mysql2/promise");
 const router = express.Router();
-const { Users } = require("./authRoutes");
 
-const chatsSchema = new mongoose.Schema({
-  userOne: String,
-  userTwo: String,
-  messages: [
-    {
-      type: { type: String },
-      timestamp: { type: Number },
-      fromUserOne: { type: Boolean },
-      content: { type: String },
-    },
-  ],
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-const Chats = mongoose.model("Chats", chatsSchema);
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS Chats (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userOne INT NOT NULL,
+        userTwo INT NOT NULL,
+        messages JSON NOT NULL,
+        FOREIGN KEY (userOne) REFERENCES Users(id),
+        FOREIGN KEY (userTwo) REFERENCES Users(id)
+      )
+    `);
+  } catch (error) {
+    console.log("Something went wrong: " + error);
+  }
+})();
 
 router.use((req, res, next) => {
   const user = req.session.user;
@@ -30,7 +41,10 @@ router.use((req, res, next) => {
 
 router.get("/", async (req, res) => {
   try {
-    res.json(await Chats.find());
+    const connection = await pool.getConnection();
+    const [chats] = await connection.query("SELECT * FROM Chats");
+    connection.release();
+    res.json(chats);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -39,70 +53,114 @@ router.get("/", async (req, res) => {
 router.post("/loadChats", async (req, res) => {
   const user = req.session.user;
 
-  const chats = await Chats.find({
-    $or: [{ userOne: user._id }, { userTwo: user._id }],
-  });
+  if (!user) {
+    res.status(401).send("Not logged in");
+    return;
+  }
 
-  res.status(200).json(chats);
+  try {
+    const connection = await pool.getConnection();
+    const [chats] = await connection.query("SELECT * FROM Chats WHERE userOne = ? OR userTwo = ?", [user.id, user.id]);
+    connection.release();
+  
+    res.status(200).json(chats);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.post("/loadChat", async (req, res) => {
   const user = req.session.user;
 
-  const partnerName = req.body.partner;
-  const partner = await Users.findOne({ name: partnerName });
-
-  if (!partner) {
-    res.status(400).send("Partner not found");
+  if (!user) {
+    res.status(401).send("Not logged in");
     return;
   }
 
-  let chat = await Chats.findOne({
-    $or: [
-      { userOne: user._id, userTwo: partner._id },
-      { userOne: partner._id, userTwo: user._id },
-    ],
-  });
+  const partnerName = req.body.partner;
+  const [partnerRows] = await pool.query("SELECT * FROM Users WHERE name = ?", [partnerName]);
 
-  if (!chat) {
-    chat = new Chats({ userOne: user._id, userTwo: partner._id, messages: [] });
+  if (partnerRows.length === 0) {
+    res.status(404).send("Partner not found");
+    return;
   }
 
-  res.status(200).json(chat);
+  const partner = partnerRows[0];
+  let chat;
+
+  try {
+    const connection = await pool.getConnection();
+    const [chatRows] = await connection.query("SELECT * FROM Chats WHERE (userOne = ? AND userTwo = ?) OR (userOne = ? AND userTwo = ?)", [user.id, partner.id, partner.id, user.id]);
+    connection.release();
+
+    if (chatRows.length === 0) {
+      chat = {
+        userOne: user.id,
+        userTwo: partner.id,
+        messages: []
+      };
+    } else {
+      chat = chatRows[0];
+    }
+
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.post("/postMessage", async (req, res) => {
   const user = req.session.user;
 
-  const partnerName = req.body.partner;
-  const partner = await Users.findOne({ name: partnerName });
-
-  if (!partner) {
-    res.status(400).send("Partner not found");
+  if (!user) {
+    res.status(401).send("Not logged in");
     return;
   }
 
-  let chat = await Chats.findOne({
-    $or: [
-      { userOne: user._id, userTwo: partner._id },
-      { userOne: partner._id, userTwo: user._id },
-    ],
-  });
+  const partnerName = req.body.partner;
+  const [partnerRows] = await pool.query("SELECT * FROM Users WHERE name = ?", [partnerName]);
 
-  if (!chat) {
-    chat = new Chats({ userOne: user._id, userTwo: partner._id, messages: [] });
+  if (partnerRows.length === 0) {
+    res.status(404).send("Partner not found");
+    return;
   }
 
-  chat.messages.push({
-    type: "text",
-    timestamp: Date.now(),
-    fromUserOne: user._id === chat.userOne,
-    content: req.body.content,
-  });
+  const partner = partnerRows[0];
+  let chat;
 
-  await chat.save();
+  try {
+    const connection = await pool.getConnection();
+    const [chatRows] = await connection.query("SELECT * FROM Chats WHERE (userOne = ? AND userTwo = ?) OR (userOne = ? AND userTwo = ?)", [user.id, partner.id, partner.id, user.id]);
 
-  res.status(200).json(chat);
+    if (chatRows.length === 0) {
+      chat = {
+        userOne: user.id,
+        userTwo: partner.id,
+        messages: []
+      };
+    } else {
+      chat = chatRows[0];
+    }
+
+    chat.messages.push({
+      type: "text",
+      timestamp: Date.now(),
+      fromUserOne: user.id === chat.userOne,
+      content: req.body.content
+    });
+
+    if (chat.id) {
+      await connection.query("UPDATE Chats SET messages = ? WHERE id = ?", [JSON.stringify(chat.messages), chat.id]);
+    } else {
+      await connection.query("INSERT INTO Chats (userOne, userTwo, messages) VALUES (?, ?, ?)", [chat.userOne, chat.userTwo, JSON.stringify(chat.messages)]);
+    }
+
+    connection.release();
+    res.status(200).json(chat);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
 });
 
 router.post("/removeMessage", async (req, res) => {
@@ -114,34 +172,34 @@ router.post("/removeMessage", async (req, res) => {
   }
 
   const partnerName = req.body.partner;
-  const partner = await Users.findOne({ name: partnerName });
+  const [partnerRows] = await pool.query("SELECT * FROM Users WHERE name = ?", [partnerName]);
 
-  if (!partner) {
-    res.status(400).send("Partner not found");
+  if (partnerRows.length === 0) {
+    res.status(404).send("Partner not found");
     return;
   }
 
-  const chat = await Chats.findOne({
-    $or: [
-      { userOne: user._id, userTwo: partner._id },
-      { userOne: partner._id, userTwo: user._id },
-    ],
-  });
+  const partner = partnerRows[0];
 
-  if (!chat) {
-    res.status(500).send("Chat does not exist");
-    return;
-  }
+  try {
+    const connection = await pool.getConnection();
+    const [chatRows] = await connection.query("SELECT * FROM Chats WHERE (userOne = ? AND userTwo = ?) OR (userOne = ? AND userTwo = ?)", [user.id, partner.id, partner.id, user.id]);
 
-  chat.messages.forEach((message, index, array) => {
-    if (message.timestamp === req.body.timestamp) {
-      array.splice(index, 1);
+    if (chatRows.length === 0) {
+      res.status(500).send("Chat does not exist");
+      return;
     }
-  });
 
-  await chat.save();
+    chat = chatRows[0];
 
-  res.status(200).json(chat);
+    chat.messages = chat.messages.filter(message => message.timestamp !== req.body.timestamp);
+
+    await connection.query("UPDATE Chats SET messages = ? WHERE id = ?", [JSON.stringify(chat.messages), chat.id]);
+    connection.release();
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 module.exports = router;

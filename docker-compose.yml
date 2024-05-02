@@ -3,13 +3,28 @@ services:
     build: .
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     depends_on:
-      - mongodb
-    links:
-      - mongodb
+      mysql:
+        condition: service_healthy
     volumes:
       - .:/usr/src/app
-  mongodb:
-    image: mongo:latest
+    expose:
+      - 3000
+  mysql:
+    image: mysql:latest
+    env_file:
+      - .env
     ports:
-      - "27017:27017"
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+    expose:
+      - 3306
+volumes:
+  mysql_data:

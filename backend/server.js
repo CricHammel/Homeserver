@@ -1,33 +1,41 @@
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const crypto = require("crypto");
-const mongoose = require("mongoose");
-const MongoStore = require("connect-mongo");
 const path = require("path");
-const {router: authRoutes } = require("./routes/authRoutes");
+const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
-const mongoUrl = "mongodb://localhost:27017/raspi";
-mongoose.connect(mongoUrl).catch(error => {
-    console.log(error);
+
+let shuttingDown = false;
+
+app.use((req, res, next) => {
+    if (!shuttingDown) {
+        return next();
+    }
+
+    throw new Error("Server is closing");
 });
 
-mongoose.connection.on("error", error => {
-    console.log(error);
+const sessionStore = new MySQLStore({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.MYSQL_ROOT_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 app.use(
     session({
         name: "app.sid",
-        secret: crypto.randomBytes(32).toString("hex"),
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         cookie: {secure: false, sameSite: "strict"},
-        store: MongoStore.create({mongoUrl: mongoUrl})
+        store: sessionStore
     })
 );
 app.use(express.static(path.join(__dirname, "../public")));
@@ -67,6 +75,15 @@ app.get("/fetchWeather", async (req, res) => {
         res.json(await response.json());
     })
 });
+
+function shutdown() {
+    console.log("Stopping server...");
+    shuttingDown = true;
+    setTimeout(() => process.exit(0), 2000);
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
